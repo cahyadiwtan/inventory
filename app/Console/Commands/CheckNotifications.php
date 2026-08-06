@@ -32,17 +32,12 @@ class CheckNotifications extends Command
             ->selectRaw('COALESCE(SUM(product_warehouses.qty_on_hand), 0) as total_stock')
             ->leftJoin('product_warehouses', 'products.id', '=', 'product_warehouses.product_id')
             ->where('products.is_active', true)
-            ->groupBy('products.id')
+            ->groupBy('products.id', 'products.name', 'products.code', 'products.min_stock', 'products.reorder_point')
             ->havingRaw('COALESCE(SUM(product_warehouses.qty_on_hand), 0) <= products.reorder_point')
             ->get();
 
         foreach ($rows as $row) {
-            if (DB::table('notifications')
-                ->where('type', 'low_stock')
-                ->where('subject_type', Product::class)
-                ->where('subject_id', $row->id)
-                ->whereDate('created_at', today())
-                ->exists()) {
+            if ($this->alreadyNotifiedToday('low_stock', $row)) {
                 continue;
             }
 
@@ -88,6 +83,10 @@ class CheckNotifications extends Command
                 continue;
             }
 
+            if ($this->alreadyNotifiedToday('invoice_due', $invoice)) {
+                continue;
+            }
+
             $service->notify(
                 'invoice_due',
                 'Piutang jatuh tempo',
@@ -107,6 +106,10 @@ class CheckNotifications extends Command
                 continue;
             }
 
+            if ($this->alreadyNotifiedToday('invoice_due', $invoice)) {
+                continue;
+            }
+
             $service->notify(
                 'invoice_due',
                 'Hutang jatuh tempo',
@@ -115,5 +118,15 @@ class CheckNotifications extends Command
                 $invoice,
             );
         }
+    }
+
+    protected function alreadyNotifiedToday(string $type, $subject): bool
+    {
+        return DB::table('notifications')
+            ->where('type', $type)
+            ->where('subject_type', $subject->getMorphClass())
+            ->where('subject_id', $subject->getKey())
+            ->whereDate('created_at', today())
+            ->exists();
     }
 }

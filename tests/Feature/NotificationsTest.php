@@ -4,7 +4,12 @@ namespace Tests\Feature;
 
 use App\Livewire\Notifications;
 use App\Models\AppNotification;
+use App\Models\Customer;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\SalesInvoice;
+use App\Models\SalesOrder;
+use App\Models\Unit;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -129,5 +134,74 @@ class NotificationsTest extends TestCase
             ->set('filter', 'unread')
             ->assertSee('Belum')
             ->assertDontSee('sudah dibaca');
+    }
+
+    private function makeDueInvoice(string $number): SalesInvoice
+    {
+        $category = ProductCategory::create(['code' => 'CAT-01', 'name' => 'Apparel']);
+        $unit = Unit::create(['code' => 'PCS', 'name' => 'Piece', 'symbol' => 'pcs']);
+        Product::create([
+            'code' => 'PRD-01',
+            'name' => 'Kaos',
+            'category_id' => $category->id,
+            'unit_id' => $unit->id,
+            'selling_price' => 50000,
+            'purchase_price' => 30000,
+        ]);
+        $customer = Customer::create(['code' => 'CUS-01', 'name' => 'PT Maju Jaya', 'address' => 'Jl. Test', 'payment_term_days' => 14]);
+
+        $order = SalesOrder::create([
+            'number' => 'SO-'.$number,
+            'customer_id' => $customer->id,
+            'order_date' => now()->toDateString(),
+            'status' => SalesOrder::STATUS_APPROVED,
+            'subtotal' => 500000,
+            'discount_amount' => 0,
+            'tax_amount' => 0,
+            'total' => 500000,
+            'created_by' => auth()->id(),
+        ]);
+
+        return SalesInvoice::create([
+            'number' => $number,
+            'sales_order_id' => $order->id,
+            'customer_id' => $customer->id,
+            'invoice_date' => now()->subDays(20)->toDateString(),
+            'due_date' => now()->subDays(5)->toDateString(),
+            'status' => SalesInvoice::STATUS_PARTIAL,
+            'subtotal' => 500000,
+            'discount_amount' => 0,
+            'tax_amount' => 0,
+            'total' => 500000,
+            'paid_amount' => 100000,
+            'created_by' => auth()->id(),
+        ]);
+    }
+
+    public function test_check_notifications_command_creates_due_invoice_notification(): void
+    {
+        $this->actingAsAdmin();
+
+        $invoice = $this->makeDueInvoice('INV-202608-000001');
+
+        $this->artisan('inventory:notifications')->assertSuccessful();
+
+        $this->assertDatabaseHas('notifications', [
+            'type' => 'invoice_due',
+            'subject_type' => SalesInvoice::class,
+            'subject_id' => $invoice->id,
+        ]);
+    }
+
+    public function test_check_notifications_command_does_not_duplicate_same_day(): void
+    {
+        $this->actingAsAdmin();
+
+        $invoice = $this->makeDueInvoice('INV-202608-000002');
+
+        $this->artisan('inventory:notifications');
+        $this->artisan('inventory:notifications');
+
+        $this->assertEquals(1, AppNotification::where('type', 'invoice_due')->where('subject_id', $invoice->id)->count());
     }
 }
