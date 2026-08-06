@@ -42,10 +42,10 @@
 - **Review:** demo PO→GRN→P.Invoice→Payment
 
 ### Sprint 6 — Reporting, Dashboard, Notifications, Hardening
-- [ ] 15 laporan + export Excel/PDF
-- [ ] Dashboard stat + grafik
-- [ ] Notifikasi terjadwal (stock min, expired, due, pending)
-- [ ] QA penuh, index/query pass, seed produksi
+- [x] 15 laporan + export Excel/PDF
+- [x] Dashboard stat + grafik
+- [x] Notifikasi terjadwal (stock min, expired, due, pending)
+- [x] QA penuh, index/query pass, seed produksi
 - **Deliverable:** release-ready
 - **Review:** uji penerimaan menyeluruh
 

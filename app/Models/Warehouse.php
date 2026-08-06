@@ -17,4 +17,9 @@ class Warehouse extends BaseModel
     {
         return $this->hasMany(ProductWarehouse::class);
     }
+
+    public function stockRows()
+    {
+        return $this->hasMany(ProductWarehouse::class);
+    }
 }

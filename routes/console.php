@@ -15,3 +15,8 @@ Schedule::call(function () {
         ->where('valid_until', '<', now()->toDateString())
         ->update(['status' => Quotation::STATUS_EXPIRED]);
 })->dailyAt('00:10')->name('expire-quotations');
+
+Schedule::command('inventory:notifications')
+    ->everySixHours()
+    ->withoutOverlapping()
+    ->name('inventory-notifications');

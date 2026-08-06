@@ -35,6 +35,7 @@
                             @endisset
                         </div>
                     </div>
+                    <livewire:notification-bell />
                 </div>
             </header>
 
