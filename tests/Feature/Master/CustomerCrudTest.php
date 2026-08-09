@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Master;
 
-use App\Livewire\Master\MasterCrud;
+use App\Livewire\Master\CustomerFormComponent;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -32,11 +32,31 @@ class CustomerCrudTest extends TestCase
             ->assertSee('Customer');
     }
 
+    public function test_super_admin_can_view_customer_create_page(): void
+    {
+        $this->actingAsAdmin();
+
+        $this->get(route('master.customers.create'))
+            ->assertOk()
+            ->assertSee('Tambah Customer');
+    }
+
+    public function test_super_admin_can_view_customer_edit_page(): void
+    {
+        $this->actingAsAdmin();
+        $customer = Customer::create(['code' => 'CST-01', 'name' => 'PT Maju Jaya', 'address' => 'Jl. A']);
+
+        $this->get(route('master.customers.edit', $customer))
+            ->assertOk()
+            ->assertSee('Edit Customer')
+            ->assertSee('PT Maju Jaya');
+    }
+
     public function test_customer_can_be_created(): void
     {
         $this->actingAsAdmin();
 
-        Livewire::test(MasterCrud::class, ['entity' => 'customers'])
+        Livewire::test(CustomerFormComponent::class)
             ->set('form.code', 'CST-01')
             ->set('form.name', 'PT Maju Jaya')
             ->set('form.address', 'Jl. Merdeka 1')
@@ -56,7 +76,7 @@ class CustomerCrudTest extends TestCase
     {
         $this->actingAsAdmin();
 
-        Livewire::test(MasterCrud::class, ['entity' => 'customers'])
+        Livewire::test(CustomerFormComponent::class)
             ->set('form.code', 'CST-01')
             ->set('form.name', 'PT Maju Jaya')
             ->set('form.address', '')
@@ -69,7 +89,7 @@ class CustomerCrudTest extends TestCase
         $this->actingAsAdmin();
         Customer::create(['code' => 'CST-01', 'name' => 'PT Maju Jaya', 'address' => 'Jl. A']);
 
-        Livewire::test(MasterCrud::class, ['entity' => 'customers'])
+        Livewire::test(CustomerFormComponent::class)
             ->set('form.code', 'CST-01')
             ->set('form.name', 'Lain')
             ->set('form.address', 'Jl. B')
@@ -82,8 +102,7 @@ class CustomerCrudTest extends TestCase
         $this->actingAsAdmin();
         $customer = Customer::create(['code' => 'CST-01', 'name' => 'PT Maju Jaya', 'address' => 'Jl. A']);
 
-        Livewire::test(MasterCrud::class, ['entity' => 'customers'])
-            ->call('openEdit', $customer->id)
+        Livewire::test(CustomerFormComponent::class, ['customer' => $customer])
             ->set('form.name', 'PT Maju Jaya Baru')
             ->call('save');
 
@@ -98,7 +117,7 @@ class CustomerCrudTest extends TestCase
         $this->actingAsAdmin();
         $customer = Customer::create(['code' => 'CST-01', 'name' => 'PT Maju Jaya', 'address' => 'Jl. A']);
 
-        Livewire::test(MasterCrud::class, ['entity' => 'customers'])
+        Livewire::test(\App\Livewire\Master\MasterCrud::class, ['entity' => 'customers'])
             ->call('delete', $customer->id);
 
         $this->assertSoftDeleted('customers', ['id' => $customer->id]);

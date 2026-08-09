@@ -3,6 +3,7 @@
 namespace Tests\Feature\Master;
 
 use App\Livewire\Master\MasterCrud;
+use App\Livewire\Master\SupplierFormComponent;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -32,11 +33,31 @@ class SupplierCrudTest extends TestCase
             ->assertSee('Supplier');
     }
 
+    public function test_super_admin_can_view_supplier_create_page(): void
+    {
+        $this->actingAsAdmin();
+
+        $this->get(route('master.suppliers.create'))
+            ->assertOk()
+            ->assertSee('Tambah Supplier');
+    }
+
+    public function test_super_admin_can_view_supplier_edit_page(): void
+    {
+        $this->actingAsAdmin();
+        $supplier = Supplier::create(['code' => 'SUP-01', 'name' => 'PT Sumber Rejeki', 'address' => 'Jl. A']);
+
+        $this->get(route('master.suppliers.edit', $supplier))
+            ->assertOk()
+            ->assertSee('Edit Supplier')
+            ->assertSee('PT Sumber Rejeki');
+    }
+
     public function test_supplier_can_be_created(): void
     {
         $this->actingAsAdmin();
 
-        Livewire::test(MasterCrud::class, ['entity' => 'suppliers'])
+        Livewire::test(SupplierFormComponent::class)
             ->set('form.code', 'SUP-01')
             ->set('form.name', 'PT Sumber Rejeki')
             ->set('form.address', 'Jl. Industri 2')
@@ -56,7 +77,7 @@ class SupplierCrudTest extends TestCase
     {
         $this->actingAsAdmin();
 
-        Livewire::test(MasterCrud::class, ['entity' => 'suppliers'])
+        Livewire::test(SupplierFormComponent::class)
             ->set('form.code', 'SUP-01')
             ->set('form.name', 'PT Sumber Rejeki')
             ->set('form.address', '')
@@ -69,7 +90,7 @@ class SupplierCrudTest extends TestCase
         $this->actingAsAdmin();
         Supplier::create(['code' => 'SUP-01', 'name' => 'PT Sumber Rejeki', 'address' => 'Jl. A']);
 
-        Livewire::test(MasterCrud::class, ['entity' => 'suppliers'])
+        Livewire::test(SupplierFormComponent::class)
             ->set('form.code', 'SUP-01')
             ->set('form.name', 'Lain')
             ->set('form.address', 'Jl. B')
@@ -82,8 +103,7 @@ class SupplierCrudTest extends TestCase
         $this->actingAsAdmin();
         $supplier = Supplier::create(['code' => 'SUP-01', 'name' => 'PT Sumber Rejeki', 'address' => 'Jl. A']);
 
-        Livewire::test(MasterCrud::class, ['entity' => 'suppliers'])
-            ->call('openEdit', $supplier->id)
+        Livewire::test(SupplierFormComponent::class, ['supplier' => $supplier])
             ->set('form.name', 'PT Sumber Rejeki Baru')
             ->call('save');
 

@@ -19,7 +19,7 @@
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700">Sales Order <span class="text-danger">*</span></label>
-                    <select wire:model="salesOrderId" wire:change="updatedSalesOrderId($event.target.value)" class="input-field mt-1">
+                    <select wire:model.live="salesOrderId" class="input-field mt-1">
                         <option value="">-- Pilih SO --</option>
                         @foreach ($invoicableOrders as $order)
                             <option value="{{ $order->id }}">{{ $order->number }} - {{ $order->customer?->name }}</option>
@@ -105,6 +105,7 @@
                             @elseif ($invoice->isPosted() && $invoice->balance() > 0)
                                 <button wire:click="openPayment('{{ $invoice->id }}')" class="font-medium text-success hover:text-success/80">Bayar</button>
                             @endif
+                            <a href="{{ route('sales.invoices.show', $invoice) }}" wire:navigate class="{{ $invoice->status === 'draft' || ($invoice->isPosted() && $invoice->balance() > 0) ? 'ml-3 ' : '' }}font-medium text-royal hover:text-royal/80">Detail</a>
                         </td>
                     </tr>
                 @empty

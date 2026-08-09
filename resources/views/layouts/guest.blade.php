@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? config('app.name', 'Laravel') }}</title>
+        <title>{{ $title ?? \App\Support\CompanyProfile::name() }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -26,7 +26,7 @@
                     <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-navy">
                         <span class="material-symbols-outlined text-[20px] text-white">hub</span>
                     </div>
-                    <span class="text-xl font-semibold tracking-tight text-navy">{{ config('app.name') }}</span>
+                    <span class="text-xl font-semibold tracking-tight text-navy">{{ \App\Support\CompanyProfile::name() }}</span>
                 </div>
             </header>
 
@@ -40,7 +40,7 @@
                 <a href="#" class="hover:text-navy">Privacy Policy</a>
                 <a href="#" class="hover:text-navy">Terms of Service</a>
                 <a href="#" class="hover:text-navy">Support</a>
-                <span>&copy; {{ date('Y') }} {{ config('app.name') }}</span>
+                <span>&copy; {{ date('Y') }} {{ \App\Support\CompanyProfile::name() }}</span>
             </footer>
         </div>
     </body>

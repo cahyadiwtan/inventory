@@ -10,9 +10,12 @@ use App\Services\ActivityLogService;
 use App\Services\NumberingService;
 use App\Services\SalesService;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class QuotationComponent extends Component
 {
+    use WithPagination;
+
     public ?string $customerId = null;
 
     public string $quotationDate = '';
@@ -23,6 +26,12 @@ class QuotationComponent extends Component
 
     public array $items = [];
 
+    public string $search = '';
+
+    public string $statusFilter = '';
+
+    public bool $showCreate = false;
+
     public function mount(): void
     {
         $this->quotationDate = now()->toDateString();
@@ -30,19 +39,87 @@ class QuotationComponent extends Component
         $this->items = [];
     }
 
+    public function openCreate(): void
+    {
+        $this->reset(['customerId', 'notes']);
+        $this->quotationDate = now()->toDateString();
+        $this->validUntil = now()->addDays(30)->toDateString();
+        $this->items = [];
+        $this->showCreate = true;
+    }
+
+    public function closeCreate(): void
+    {
+        $this->showCreate = false;
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function export(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $rows = Quotation::with('customer')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn ($q) => [
+                $q->number,
+                $q->customer?->name,
+                $q->quotation_date?->toDateString(),
+                $q->valid_until?->toDateString(),
+                (float) $q->total,
+                $q->status,
+            ]);
+
+        return response()->streamDownload(function () use ($rows) {
+            $stream = fopen('php://output', 'w');
+            fputcsv($stream, ['Quote Number', 'Customer', 'Date', 'Valid Until', 'Total Amount', 'Status']);
+            foreach ($rows as $row) {
+                fputcsv($stream, $row);
+            }
+            fclose($stream);
+        }, 'quotations-'.now()->format('Ymd-His').'.csv');
+    }
+
     public function render()
     {
-        $quotations = Quotation::with(['customer', 'items.product', 'salesOrder'])
-            ->orderByDesc('created_at')
-            ->get();
+        $query = Quotation::with(['customer', 'items.product', 'salesOrder']);
+
+        if ($this->search !== '') {
+            $query->where(function ($q) {
+                $q->where('number', 'like', "%{$this->search}%")
+                    ->orWhereHas('customer', fn ($c) => $c->where('name', 'like', "%{$this->search}%"));
+            });
+        }
+
+        if ($this->statusFilter !== '') {
+            $query->where('status', $this->statusFilter);
+        }
+
+        $quotations = $query->orderByDesc('created_at')->paginate(10);
 
         return view('livewire.sales.quotation', [
             'quotations' => $quotations,
+            'draftCount' => Quotation::where('status', Quotation::STATUS_DRAFT)->count(),
+            'awaitingCount' => Quotation::where('status', Quotation::STATUS_SENT)->count(),
+            'conversionRate' => $this->conversionRate(),
+            'openValue' => (float) Quotation::whereIn('status', [Quotation::STATUS_DRAFT, Quotation::STATUS_SENT, Quotation::STATUS_ACCEPTED])->sum('total'),
             'customers' => Customer::query()->where('is_active', true)->orderBy('name')->get(),
             'products' => Product::query()->where('is_active', true)->orderBy('name')->get(),
             'taxes' => Tax::query()->where('is_active', true)->orderBy('name')->get(),
             'salesService' => app(SalesService::class),
         ])->title('Quotation | Inventory System');
+    }
+
+    protected function conversionRate(): int
+    {
+        $total = Quotation::whereIn('status', [
+            Quotation::STATUS_ACCEPTED, Quotation::STATUS_REJECTED, Quotation::STATUS_EXPIRED,
+        ])->count();
+        $accepted = Quotation::where('status', Quotation::STATUS_ACCEPTED)->count();
+
+        return $total > 0 ? (int) round($accepted / $total * 100) : 0;
     }
 
     public function rules(): array
@@ -109,6 +186,7 @@ class QuotationComponent extends Component
 
         $this->reset(['customerId', 'notes']);
         $this->items = [];
+        $this->showCreate = false;
     }
 
     public function send(string $id): void

@@ -19,7 +19,7 @@
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700">Purchase Order <span class="text-danger">*</span></label>
-                    <select wire:model="purchaseOrderId" wire:change="updatedPurchaseOrderId($event.target.value)" class="input-field mt-1">
+                    <select wire:model.live="purchaseOrderId" class="input-field mt-1">
                         <option value="">-- Pilih PO --</option>
                         @foreach ($invoicableOrders as $order)
                             <option value="{{ $order->id }}">{{ $order->number }} - {{ $order->supplier?->name }}</option>

@@ -41,3 +41,278 @@
         @apply rounded-md bg-danger-soft px-2.5 py-0.5 text-xs font-semibold text-danger;
     }
 }
+
+/* ============================================================
+   Print — Laser (A4) vs Dot Matrix (continuous 9.5x11")
+   ============================================================ */
+.print-area {
+    display: none;
+}
+
+/* Wrapping of full-screen layout inside a div.print-screen */
+@media print {
+    .print-screen {
+        display: none !important;
+    }
+
+    .print-area.print-laser,
+    .print-area.print-matrix {
+        display: none;
+    }
+
+    body.print-mode-matrix .print-area.print-matrix,
+    .print-mode-matrix .print-area.print-matrix {
+        display: block;
+    }
+
+    body.print-mode-laser .print-area.print-laser,
+    .print-mode-laser .print-area.print-laser {
+        display: block;
+    }
+}
+
+@media print {
+    @page {
+        size: 241mm 279.4mm;
+        margin: 4mm 3mm;
+    }
+}
+
+/* ---- Laser print area: clean monochrome A4-ish ---- */
+.print-area.print-laser {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #0b1c30;
+    width: 100%;
+}
+
+.print-area.print-laser .pl-company {
+    border-bottom: 2px solid #0b1c30;
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+}
+
+.print-area.print-laser .pl-company-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0b1c30;
+}
+
+.print-area.print-laser .pl-company-addr,
+.print-area.print-laser .pl-company-contact {
+    font-size: 10px;
+    color: #45474c;
+    margin-top: 2px;
+}
+
+.print-area.print-laser .pl-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.print-area.print-laser .pl-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0051d5;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.print-area.print-laser .pl-meta {
+    font-size: 11px;
+    text-align: right;
+}
+
+.print-area.print-laser .pl-meta div {
+    margin-bottom: 2px;
+}
+
+.print-area.print-laser .pl-meta span {
+    font-weight: 600;
+}
+
+.print-area.print-laser table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.print-area.print-laser table th {
+    border-bottom: 2px solid #0b1c30;
+    padding: 6px 8px;
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.print-area.print-laser table td {
+    border-bottom: 1px solid #c5c6cd;
+    padding: 6px 8px;
+}
+
+.print-area.print-laser table th.r,
+.print-area.print-laser table td.r {
+    text-align: right;
+}
+
+.print-area.print-laser .pl-summary {
+    margin-left: auto;
+    width: 260px;
+    font-size: 11px;
+    margin-top: 12px;
+}
+
+.print-area.print-laser .pl-summary .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+}
+
+.print-area.print-laser .pl-summary .row.total {
+    border-top: 2px solid #0b1c30;
+    margin-top: 4px;
+    padding-top: 6px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.print-area.print-laser .pl-sign {
+    display: flex;
+    gap: 48px;
+    margin-top: 48px;
+}
+
+.print-area.print-laser .pl-sign .col {
+    flex: 1;
+}
+
+.print-area.print-laser .pl-sign .lbl {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #45474c;
+    margin-bottom: 28px;
+}
+
+.print-area.print-laser .pl-sign .line {
+    border-bottom: 1px solid #94a3b8;
+    height: 32px;
+}
+
+.print-area.print-laser .pl-sign .sub {
+    font-size: 10px;
+    color: #45474c;
+    margin-top: 4px;
+}
+
+.print-area.print-laser .pl-notes {
+    margin-top: 16px;
+    font-size: 11px;
+    color: #45474c;
+}
+
+.print-area.print-laser .pl-notes b {
+    text-transform: uppercase;
+    font-size: 9px;
+}
+
+/* ---- Dot matrix print area: monospace, continuous 9.5x11 ---- */
+.print-area.print-matrix {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10px;
+    line-height: 1.15;
+    color: #000;
+    width: 100%;
+    white-space: normal;
+}
+
+.print-area.print-matrix .mx-center {
+    text-align: center;
+}
+
+.print-area.print-matrix .mx-brand {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.print-area.print-matrix .mx-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+.print-area.print-matrix .mx-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.print-area.print-matrix .mx-row .k {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.print-area.print-matrix .mx-items {
+    margin-top: 6px;
+}
+
+.print-area.print-matrix .mx-items .hd {
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 1px 0;
+}
+
+.print-area.print-matrix .mx-items .line {
+    display: flex;
+    justify-content: space-between;
+    padding: 1px 0;
+}
+
+.print-area.print-matrix .mx-items .num {
+    width: 4%;
+    text-align: center;
+}
+
+.print-area.print-matrix .mx-items .desc {
+    width: 46%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.print-area.print-matrix .mx-items .rt {
+    width: 16%;
+    text-align: right;
+}
+
+.print-area.print-matrix .mx-sum {
+    margin-top: 6px;
+    border-top: 1px solid #000;
+    padding-top: 2px;
+}
+
+.print-area.print-matrix .mx-sign {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+}
+
+.print-area.print-matrix .mx-sign .col {
+    width: 45%;
+}
+
+.print-area.print-matrix .mx-sign .lbl {
+    font-size: 9px;
+    margin-bottom: 22px;
+}
+
+.print-area.print-matrix .mx-sign .line {
+    border-bottom: 1px solid #000;
+    height: 24px;
+}
+
+.print-area.print-matrix .mx-footer {
+    margin-top: 8px;
+    font-size: 9px;
+}

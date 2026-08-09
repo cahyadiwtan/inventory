@@ -20,3 +20,10 @@ Schedule::command('inventory:notifications')
     ->everySixHours()
     ->withoutOverlapping()
     ->name('inventory-notifications');
+
+Schedule::call(function () {
+    file_put_contents(
+        storage_path('framework/heartbeat'),
+        now()->toDateTimeString(),
+    );
+})->everyMinute()->name('heartbeat');

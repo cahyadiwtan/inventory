@@ -74,6 +74,7 @@
                                 <button wire:click="approve('{{ $order->id }}')" class="font-medium text-success hover:text-success/80">Approve</button>
                                 <button wire:click="cancel('{{ $order->id }}')" wire:confirm="Yakin batalkan?" class="ml-3 font-medium text-danger hover:text-danger/80">Cancel</button>
                             @endif
+                            <a href="{{ route('sales.orders.show', $order) }}" wire:navigate class="{{ $order->status === 'draft' ? 'ml-3 ' : '' }}font-medium text-royal hover:text-royal/80">Detail</a>
                         </td>
                     </tr>
                 @empty

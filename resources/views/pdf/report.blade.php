@@ -16,7 +16,7 @@
 </head>
 <body>
     <h1>{{ $title }}</h1>
-    <div class="meta">Dibuat: {{ now()->format('d M Y H:i') }} · Inventory System</div>
+    <div class="meta">Dibuat: {{ now()->format('d M Y H:i') }} · {{ \App\Support\CompanyProfile::name() }}</div>
     <table>
         <thead>
             <tr>

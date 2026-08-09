@@ -1,4 +1,8 @@
 <div class="space-y-6">
+    @php
+        $separateForm = in_array($entity, ['customers', 'suppliers']);
+    @endphp
+
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-semibold text-navy-900">{{ $config['title'] }}</h1>
@@ -11,9 +15,15 @@
                 placeholder="Cari kode / nama..."
                 class="input-field !w-64"
             >
-            <button wire:click="openCreate" class="btn-primary">
-                + Tambah
-            </button>
+            @if ($separateForm)
+                <a href="{{ route('master.'.$entity.'.create') }}" wire:navigate class="btn-primary">
+                    + Tambah
+                </a>
+            @else
+                <button wire:click="openCreate" class="btn-primary">
+                    + Tambah
+                </button>
+            @endif
         </div>
     </div>
 
@@ -49,7 +59,11 @@
                             </button>
                         </td>
                         <td class="px-6 py-4 text-right text-sm">
-                            <button wire:click="openEdit('{{ $item->id }}')" class="font-medium text-royal hover:text-royal-600">Edit</button>
+                            @if ($separateForm)
+                                <a href="{{ route('master.'.$entity.'.edit', $item) }}" wire:navigate class="font-medium text-royal hover:text-royal-600">Edit</a>
+                            @else
+                                <button wire:click="openEdit('{{ $item->id }}')" class="font-medium text-royal hover:text-royal-600">Edit</button>
+                            @endif
                             <button wire:click="delete('{{ $item->id }}')" wire:confirm="Yakin hapus?" class="ml-3 font-medium text-danger hover:text-danger/80">Hapus</button>
                         </td>
                     </tr>

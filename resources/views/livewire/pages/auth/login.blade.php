@@ -30,7 +30,7 @@ new #[Layout('layouts.guest')] class extends Component
             <span class="material-symbols-outlined -rotate-3 text-[32px] text-navy-600">security</span>
         </div>
         <h1 class="mb-2 text-3xl font-bold tracking-tight text-navy-900">Welcome Back</h1>
-        <p class="text-sm text-navy-500">Secure access to {{ config('app.name') }} systems.</p>
+        <p class="text-sm text-navy-500">Secure access to {{ \App\Support\CompanyProfile::name() }} systems.</p>
     </div>
 
     @if (session('status'))
@@ -97,27 +97,16 @@ new #[Layout('layouts.guest')] class extends Component
     </form>
 
     <!-- SSO Divider -->
+    <!--
     <div class="relative mt-6 flex items-center justify-center">
         <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-surface-border"></div>
         </div>
         <span class="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400">Or continue with</span>
     </div>
-
-    <div class="mt-6 grid grid-cols-2 gap-4">
-        <button type="button"
-            class="flex h-12 items-center justify-center gap-2 rounded-lg border border-surface-outline bg-white text-xs font-semibold uppercase tracking-wide text-navy-800 transition-colors hover:bg-surface-muted">
-            <span class="material-symbols-outlined text-[20px]">cloud</span>
-            Azure AD
-        </button>
-        <button type="button"
-            class="flex h-12 items-center justify-center gap-2 rounded-lg border border-surface-outline bg-white text-xs font-semibold uppercase tracking-wide text-navy-800 transition-colors hover:bg-surface-muted">
-            <span class="material-symbols-outlined text-[20px]">domain</span>
-            Okta
-        </button>
-    </div>
-
+-->
     <!-- Role Context -->
+    <!-- 
     <div class="mt-8 flex items-start gap-3 rounded-lg border border-surface-border bg-surface-muted p-4">
         <span class="material-symbols-outlined mt-0.5 text-royal">info</span>
         <div>
@@ -128,5 +117,7 @@ new #[Layout('layouts.guest')] class extends Component
                 for optimized barcode scanning.
             </span>
         </div>
+    </div>
+    -->
     </div>
 </div>

@@ -19,7 +19,7 @@
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700">Sales Order <span class="text-danger">*</span></label>
-                    <select wire:model="salesOrderId" wire:change="updatedSalesOrderId($event.target.value)" class="input-field mt-1">
+                    <select wire:model.live="salesOrderId" class="input-field mt-1">
                         <option value="">-- Pilih SO --</option>
                         @foreach ($openOrders as $order)
                             <option value="{{ $order->id }}">{{ $order->number }} - {{ $order->customer?->name }}</option>
@@ -105,9 +105,12 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right text-sm">
-                            @if ($delivery->status === 'draft')
-                                <button wire:click="post('{{ $delivery->id }}')" wire:confirm="Posting stok keluar?" class="font-medium text-royal hover:text-royal-600">Post</button>
-                            @endif
+                            <div class="flex items-center justify-end gap-3">
+                                <a href="{{ route('sales.deliveries.show', $delivery) }}" wire:navigate class="font-medium text-royal hover:text-royal-600">Detail</a>
+                                @if ($delivery->status === 'draft')
+                                    <button wire:click="post('{{ $delivery->id }}')" wire:confirm="Posting stok keluar?" class="font-medium text-royal hover:text-royal-600">Post</button>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @empty

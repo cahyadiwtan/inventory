@@ -60,4 +60,10 @@ class Quotation extends BaseModel
     {
         return $this->status === self::STATUS_ACCEPTED && ! $this->salesOrder()->exists();
     }
+
+    public function isExpired(): bool
+    {
+        return $this->valid_until && $this->valid_until->isBefore(today())
+            && in_array($this->status, [self::STATUS_DRAFT, self::STATUS_SENT, self::STATUS_ACCEPTED]);
+    }
 }

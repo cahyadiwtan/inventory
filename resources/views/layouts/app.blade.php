@@ -5,21 +5,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? config('app.name', 'Laravel') }}</title>
+        <title>{{ $title ?? \App\Support\CompanyProfile::name() }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <script>
+            window.addEventListener('beforeprint', () => {
+                window.__prevTitle = document.title;
+                document.title = '';
+            });
+            window.addEventListener('afterprint', () => {
+                if (window.__prevTitle) {
+                    document.title = window.__prevTitle;
+                }
+            });
+        </script>
     </head>
     <body class="font-sans antialiased">
         <livewire:layout.navigation />
 
         <div class="min-h-screen bg-surface pt-16 lg:pl-60">
             <!-- Topbar -->
-            <header class="fixed inset-x-0 top-0 z-30 h-16 border-b border-line bg-white/90 backdrop-blur lg:pl-60">
+            <header class="fixed inset-x-0 top-0 z-30 h-16 border-b border-line bg-white/90 backdrop-blur lg:pl-60 print:hidden">
                 <div class="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center gap-3">
                         <button x-data @click="$dispatch('toggle-sidebar')" class="rounded-lg p-2 text-ink hover:bg-surface lg:hidden">
@@ -31,7 +44,7 @@
                             @isset($header)
                                 {{ $header }}
                             @else
-                                <h1 class="text-lg font-semibold text-ink">{{ $title ?? config('app.name') }}</h1>
+                                <h1 class="text-lg font-semibold text-ink">{{ $title ?? \App\Support\CompanyProfile::name() }}</h1>
                             @endisset
                         </div>
                     </div>
