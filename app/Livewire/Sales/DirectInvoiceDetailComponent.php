@@ -8,7 +8,7 @@ use App\Services\SalesService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Component;
 
-class SalesInvoiceDetailComponent extends Component
+class DirectInvoiceDetailComponent extends Component
 {
     public SalesInvoice $invoice;
 
@@ -18,11 +18,10 @@ class SalesInvoiceDetailComponent extends Component
     {
         $this->invoice = $invoice->loadMissing([
             'customer',
-            'salesOrder',
+            'deliveryOrder.warehouse',
             'items.product',
             'items.tax',
             'creator',
-            'payments.creator',
         ]);
     }
 
@@ -31,12 +30,11 @@ class SalesInvoiceDetailComponent extends Component
         $this->dispatch('print');
     }
 
-    public function exportPdf(): \Symfony\Component\HttpFoundation\Response
+    public function exportPdfInvoice(): \Symfony\Component\HttpFoundation\Response
     {
         $data = [
             'invoice' => $this->invoice->load([
                 'customer',
-                'salesOrder',
                 'items.product',
                 'items.tax',
                 'creator',
@@ -49,17 +47,17 @@ class SalesInvoiceDetailComponent extends Component
 
         return response()->streamDownload(
             fn () => print($pdf->output()),
-            'sales-invoice-'.$this->invoice->number.'-'.now()->format('Ymd-His').'.pdf'
+            'invoice-'.$this->invoice->number.'-'.now()->format('Ymd-His').'.pdf'
         );
     }
 
     public function exportPdfSuratJalan(): \Symfony\Component\HttpFoundation\Response
     {
-        $delivery = $this->deliveryOrderForExport();
-
-        if (! $delivery) {
-            throw new \RuntimeException('Surat jalan tidak ditemukan untuk invoice ini.');
-        }
+        $delivery = $this->invoice->deliveryOrder()->with([
+            'warehouse',
+            'items.product',
+            'creator',
+        ])->firstOrFail();
 
         $data = [
             'deliveryOrder' => $delivery,
@@ -76,38 +74,20 @@ class SalesInvoiceDetailComponent extends Component
         );
     }
 
-    protected function deliveryOrderForExport(): ?DeliveryOrder
-    {
-        $invoice = $this->invoice->loadMissing(['salesOrder', 'deliveryOrder']);
-
-        if ($invoice->deliveryOrder) {
-            return $invoice->deliveryOrder->load(['warehouse', 'items.product', 'creator']);
-        }
-
-        if ($invoice->salesOrder) {
-            return $invoice->salesOrder->deliveryOrders()
-                ->where('status', DeliveryOrder::STATUS_POSTED)
-                ->with(['warehouse', 'items.product', 'creator'])
-                ->latest()
-                ->first();
-        }
-
-        return null;
-    }
-
     public function render()
     {
         $invoice = $this->invoice->load([
             'customer',
-            'salesOrder',
+            'deliveryOrder.warehouse',
             'items.product',
             'items.tax',
             'creator',
-            'payments.creator',
         ]);
 
-        return view('livewire.sales.sales-invoice-detail', [
+        return view('livewire.sales.direct-invoice-detail', [
             'invoice' => $invoice,
+            'deliveryOrder' => $invoice->deliveryOrder,
+            'salesService' => app(SalesService::class),
         ])->title("{$invoice->number} | Inventory System");
     }
 }

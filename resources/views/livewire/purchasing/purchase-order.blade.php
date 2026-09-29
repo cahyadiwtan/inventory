@@ -1,4 +1,5 @@
-<div class="space-y-6">
+<div class="print-mode-laser space-y-6" x-data @print.window="window.print()">
+    <div class="print-screen space-y-6">
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-semibold text-navy-900">Purchase Order</h1>
@@ -120,11 +121,13 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right text-sm">
+                            <button wire:click="print('{{ $order->id }}')" class="font-medium text-royal hover:text-royal-600">Print</button>
+                            <button wire:click="exportPdf('{{ $order->id }}')" class="ml-3 font-medium text-royal hover:text-royal-600">PDF</button>
                             @if ($order->status === 'draft')
-                                <button wire:click="approve('{{ $order->id }}')" class="font-medium text-success hover:text-success/80">Approve</button>
+                                <button wire:click="approve('{{ $order->id }}')" class="ml-3 font-medium text-success hover:text-success/80">Approve</button>
                                 <button wire:click="reject('{{ $order->id }}')" wire:confirm="Yakin reject?" class="ml-3 font-medium text-danger hover:text-danger/80">Reject</button>
                             @elseif ($order->status === 'approved')
-                                <button wire:click="cancel('{{ $order->id }}')" wire:confirm="Batalkan PO?" class="font-medium text-danger hover:text-danger/80">Cancel</button>
+                                <button wire:click="cancel('{{ $order->id }}')" wire:confirm="Batalkan PO?" class="ml-3 font-medium text-danger hover:text-danger/80">Cancel</button>
                             @endif
                         </td>
                     </tr>
@@ -137,5 +140,13 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+    </div>
+
+    {{-- ==== Laser / A4 print area ==== --}}
+    <div class="print-area print-laser">
+        @if ($this->selectedOrderForPrinting)
+            @include('pdf.partials.laser-purchase-order', ['purchaseOrder' => $this->selectedOrderForPrinting])
+        @endif
     </div>
 </div>

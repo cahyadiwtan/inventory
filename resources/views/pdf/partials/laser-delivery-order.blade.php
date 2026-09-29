@@ -1,6 +1,8 @@
 @php
     $c = $company ?? \App\Support\CompanyProfile::data();
     $logo = $logo ?? \App\Support\CompanyProfile::logoUrl();
+    $customer = $deliveryOrder->salesOrder?->customer ?? $deliveryOrder->salesInvoice?->customer;
+    $refNumber = $deliveryOrder->salesOrder?->number ?? $deliveryOrder->salesInvoice?->number;
 @endphp
 <div class="pl-company" style="{{ !empty($logo) ? 'display:flex;align-items:center;gap:12px;' : '' }}">
     @if (!empty($logo))
@@ -24,16 +26,16 @@
     </div>
     <div class="pl-meta">
         <div><span>Date:</span> {{ $deliveryOrder->delivery_date?->format('d M Y') }}</div>
-        <div><span>Sales Order:</span> {{ $deliveryOrder->salesOrder?->number }}</div>
-        <div><span>Warehouse:</span> {{ $deliveryOrder->warehouse?->name }}</div>
-        <div><span>Status:</span> {{ ucfirst($deliveryOrder->status) }}</div>
+        @if ($refNumber)
+            <div><span>Ref:</span> {{ $refNumber }}</div>
+        @endif
     </div>
 </div>
 
 <div style="font-size:11px;margin-bottom:12px;">
-    <div><b>Ship To:</b> {{ $deliveryOrder->salesOrder?->customer?->name }}</div>
-    @if ($deliveryOrder->salesOrder?->customer?->address)
-        <div style="margin-top:2px;">{{ $deliveryOrder->salesOrder->customer->address }}</div>
+    <div><b>Ship To:</b> {{ $customer?->name }}</div>
+    @if ($customer?->address)
+        <div style="margin-top:2px;">{{ $customer->address }}</div>
     @endif
 </div>
 
@@ -88,6 +90,6 @@
     <div class="col">
         <div class="lbl">Received By</div>
         <div class="line"></div>
-        <div class="sub">{{ $deliveryOrder->salesOrder?->customer?->name }}</div>
+        <div class="sub">{{ $customer?->name }}</div>
     </div>
 </div>

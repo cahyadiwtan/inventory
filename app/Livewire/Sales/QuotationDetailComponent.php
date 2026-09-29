@@ -22,6 +22,11 @@ class QuotationDetailComponent extends Component
         ]);
     }
 
+    public function print(): void
+    {
+        $this->dispatch('print');
+    }
+
     public function exportPdf(): \Symfony\Component\HttpFoundation\Response
     {
         $data = [

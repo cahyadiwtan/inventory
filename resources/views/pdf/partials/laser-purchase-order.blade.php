@@ -1,8 +1,6 @@
 @php
     $c = $company ?? \App\Support\CompanyProfile::data();
     $logo = $logo ?? \App\Support\CompanyProfile::logoUrl();
-    $refLabel = $invoice->salesOrder ? 'Sales Order' : 'Surat Jalan';
-    $refValue = $invoice->salesOrder?->number ?? $invoice->deliveryOrder?->number;
 @endphp
 <div class="pl-company" style="{{ !empty($logo) ? 'display:flex;align-items:center;gap:12px;' : '' }}">
     @if (!empty($logo))
@@ -21,23 +19,20 @@
 
 <div class="pl-header">
     <div>
-        <div class="pl-title">Sales Invoice</div>
-        <div style="font-size:13px;font-weight:700;margin-top:4px;">{{ $invoice->number }}</div>
+        <div class="pl-title">Purchase Order</div>
+        <div style="font-size:13px;font-weight:700;margin-top:4px;">{{ $purchaseOrder->number }}</div>
     </div>
     <div class="pl-meta">
-        <div><span>Invoice Date:</span> {{ $invoice->invoice_date?->format('d M Y') }}</div>
-        <div><span>Due Date:</span> {{ $invoice->due_date?->format('d M Y') }}</div>
-        @if ($refValue)
-            <div><span>{{ $refLabel }}:</span> {{ $refValue }}</div>
-        @endif
-        <div><span>Status:</span> {{ ucfirst($invoice->status) }}</div>
+        <div><span>Order Date:</span> {{ $purchaseOrder->order_date?->format('d M Y') }}</div>
+        <div><span>Expected:</span> {{ $purchaseOrder->expected_date?->format('d M Y') ?: '—' }}</div>
+        <div><span>Status:</span> {{ ucfirst($purchaseOrder->status) }}</div>
     </div>
 </div>
 
 <div style="font-size:11px;margin-bottom:12px;">
-    <div><b>Bill To:</b> {{ $invoice->customer?->name }}</div>
-    @if ($invoice->customer?->address)
-        <div style="margin-top:2px;">{{ $invoice->customer->address }}</div>
+    <div><b>Supplier:</b> {{ $purchaseOrder->supplier?->name }}</div>
+    @if ($purchaseOrder->supplier?->address)
+        <div style="margin-top:2px;">{{ $purchaseOrder->supplier->address }}</div>
     @endif
 </div>
 
@@ -54,7 +49,7 @@
         </tr>
     </thead>
     <tbody>
-        @forelse ($invoice->items as $index => $item)
+        @forelse ($purchaseOrder->items as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $item->product?->name ?: $item->description }}</td>
@@ -75,39 +70,31 @@
 <div class="pl-summary">
     <div class="row">
         <span>Subtotal</span>
-        <span>{{ number_format((float) $invoice->subtotal, 2) }}</span>
+        <span>{{ number_format((float) $purchaseOrder->subtotal, 2) }}</span>
     </div>
     <div class="row">
         <span>Discount</span>
-        <span>-{{ number_format((float) $invoice->discount_amount, 2) }}</span>
+        <span>-{{ number_format((float) $purchaseOrder->discount_amount, 2) }}</span>
     </div>
     <div class="row">
         <span>Tax</span>
-        <span>{{ number_format((float) $invoice->tax_amount, 2) }}</span>
+        <span>{{ number_format((float) $purchaseOrder->tax_amount, 2) }}</span>
     </div>
     <div class="row total">
         <span>Total</span>
-        <span>{{ number_format((float) $invoice->total, 2) }}</span>
-    </div>
-    <div class="row">
-        <span>Paid</span>
-        <span>-{{ number_format((float) $invoice->paid_amount, 2) }}</span>
-    </div>
-    <div class="row" style="font-weight:700;">
-        <span>Balance</span>
-        <span>{{ number_format($invoice->balance(), 2) }}</span>
+        <span>{{ number_format((float) $purchaseOrder->total, 2) }}</span>
     </div>
 </div>
 
-@if ($invoice->notes)
-    <div class="pl-notes"><b>Notes:</b> {{ $invoice->notes }}</div>
+@if ($purchaseOrder->notes)
+    <div class="pl-notes"><b>Notes:</b> {{ $purchaseOrder->notes }}</div>
 @endif
 
 <div class="pl-sign">
     <div class="col">
         <div class="lbl">Prepared By</div>
         <div class="line"></div>
-        <div class="sub">{{ $invoice->creator?->name }}</div>
+        <div class="sub">{{ $purchaseOrder->creator?->name }}</div>
     </div>
     <div class="col">
         <div class="lbl">Approved By</div>

@@ -141,6 +141,9 @@ class ProductCrud extends Component
         $data['max_stock'] = (float) $data['max_stock'];
         $data['reorder_point'] = (float) $data['reorder_point'];
         $data['weight'] = $data['weight'] !== '' && $data['weight'] !== null ? (float) $data['weight'] : null;
+        $data['brand_id'] = $data['brand_id'] !== '' && $data['brand_id'] !== null ? $data['brand_id'] : null;
+        $data['category_id'] = $data['category_id'] !== '' && $data['category_id'] !== null ? $data['category_id'] : null;
+        $data['unit_id'] = $data['unit_id'] !== '' && $data['unit_id'] !== null ? $data['unit_id'] : null;
 
         if ($this->editingId) {
             $product = Product::findOrFail($this->editingId);

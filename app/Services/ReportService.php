@@ -32,6 +32,7 @@ class ReportService
             'sales_order' => ['label' => 'Sales Order', 'group' => 'Penjualan', 'range' => true],
             'delivery_order' => ['label' => 'Delivery Order', 'group' => 'Penjualan', 'range' => true],
             'sales_invoice' => ['label' => 'Faktur Penjualan', 'group' => 'Penjualan', 'range' => true],
+            'omzet' => ['label' => 'Omzet', 'group' => 'Penjualan', 'range' => true, 'period' => true],
             'sales_by_product' => ['label' => 'Penjualan per Produk', 'group' => 'Penjualan', 'range' => true],
             'sales_by_customer' => ['label' => 'Penjualan per Customer', 'group' => 'Penjualan', 'range' => true],
             'purchase_order' => ['label' => 'Purchase Order', 'group' => 'Pembelian', 'range' => true],
@@ -63,6 +64,7 @@ class ReportService
             'sales_order' => $this->salesOrder($filters),
             'delivery_order' => $this->deliveryOrder($filters),
             'sales_invoice' => $this->salesInvoice($filters),
+            'omzet' => $this->omzet($filters),
             'sales_by_product' => $this->salesByProduct($filters),
             'sales_by_customer' => $this->salesByCustomer($filters),
             'purchase_order' => $this->purchaseOrder($filters),
@@ -242,6 +244,45 @@ class ReportService
             ])->all();
 
         return ['title' => 'Faktur Penjualan', 'headings' => ['Nomor', 'Customer', 'Tanggal', 'Jatuh Tempo', 'Total', 'Dibayar', 'Sisa', 'Status'], 'rows' => $rows];
+    }
+
+    protected function omzet(array $filters): array
+    {
+        $period = $filters['period'] ?? 'harian';
+        $select = match ($period) {
+            'tahunan' => "DATE_FORMAT(invoice_date, '%Y')",
+            'bulanan' => "DATE_FORMAT(invoice_date, '%Y-%m')",
+            default => "DATE_FORMAT(invoice_date, '%Y-%m-%d')",
+        };
+
+        $query = DB::table('sales_invoices')
+            ->selectRaw("{$select} as periode")
+            ->selectRaw('COUNT(*) as transaksi')
+            ->selectRaw('COALESCE(SUM(total), 0) as omzet')
+            ->selectRaw('COALESCE(SUM(paid_amount), 0) as dibayar')
+            ->selectRaw('COALESCE(SUM(total - paid_amount), 0) as sisa')
+            ->where('status', '!=', SalesInvoice::STATUS_VOID)
+            ->groupBy('periode');
+
+        $this->range($query, 'invoice_date', $filters);
+
+        $rows = $query->orderBy('periode')->get()
+            ->map(function ($r) use ($period) {
+                $label = match ($period) {
+                    'tahunan' => $r->periode,
+                    'bulanan' => \Carbon\Carbon::createFromFormat('Y-m', $r->periode)->format('F Y'),
+                    default => \Carbon\Carbon::createFromFormat('Y-m-d', $r->periode)->translatedFormat('d F Y'),
+                };
+
+                return [
+                    $label, (int) $r->transaksi,
+                    $this->money((float) $r->omzet),
+                    $this->money((float) $r->dibayar),
+                    $this->money((float) $r->sisa),
+                ];
+            })->all();
+
+        return ['title' => 'Omzet Penjualan ('.ucfirst($period).')', 'headings' => ['Periode', 'Transaksi', 'Omzet', 'Dibayar', 'Sisa'], 'rows' => $rows];
     }
 
     protected function salesByProduct(array $filters): array

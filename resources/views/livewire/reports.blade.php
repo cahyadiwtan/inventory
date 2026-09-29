@@ -36,6 +36,13 @@
                             <span class="text-gray-400">s/d</span>
                             <input type="date" wire:model.live="to" class="input-field">
                         @endif
+                        @if ($reportService->definitions()[$this->report]['period'] ?? false)
+                            <select wire:model.live="period" class="input-field">
+                                <option value="harian">Harian</option>
+                                <option value="bulanan">Bulanan</option>
+                                <option value="tahunan">Tahunan</option>
+                            </select>
+                        @endif
                         @if ($reportService->definitions()[$this->report]['warehouse'] ?? false)
                             <select wire:model.live="warehouse" class="input-field">
                                 <option value="">Semua Gudang</option>

@@ -14,6 +14,7 @@ class Reports extends Component
 {
     public string $report = 'stock_on_hand';
     public string $group = 'Stok';
+    public string $period = 'harian';
     public ?string $from = null;
     public ?string $to = null;
     public ?string $warehouse = null;
@@ -48,6 +49,7 @@ class Reports extends Component
         return app(ReportService::class)->run($this->report, [
             'from' => $this->from,
             'to' => $this->to,
+            'period' => $this->period,
             'warehouse' => $this->warehouse,
             'customer' => $this->customer,
             'supplier' => $this->supplier,

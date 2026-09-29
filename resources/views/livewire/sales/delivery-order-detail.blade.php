@@ -194,65 +194,8 @@
         @include('pdf.partials.laser-delivery-order', ['deliveryOrder' => $deliveryOrder, 'salesService' => $salesService])
     </div>
 
-    {{-- ==== Dot Matrix print area (9.5x11 continuous) ==== --}}
+    {{-- ==== Dot Matrix print area (9.5x11 continuous) — tata letak mengikuti Laser / A4 ==== --}}
     <div class="print-area print-matrix">
-        <div class="mx-center mx-brand">{{ \App\Support\CompanyProfile::name() }}</div>
-        <div class="mx-center mx-title">Delivery Order</div>
-        <div class="mx-center" style="font-weight:700;">{{ $deliveryOrder->number }}</div>
-        <div class="mx-center" style="margin-bottom:4px;">{{ $deliveryOrder->delivery_date?->format('d M Y') }}</div>
-
-        <div class="mx-row"><span class="k">Ship To</span><span>{{ $deliveryOrder->salesOrder?->customer?->name }}</span></div>
-        <div class="mx-row"><span class="k">SO</span><span>{{ $deliveryOrder->salesOrder?->number }}</span></div>
-        <div class="mx-row"><span class="k">WH</span><span>{{ $deliveryOrder->warehouse?->name }}</span></div>
-
-        <div class="mx-items">
-            <div class="mx-row hd">
-                <span class="num">#</span>
-                <span class="desc">Item</span>
-                <span class="rt">Order</span>
-                <span class="rt">Dlv</span>
-                <span class="rt">Qty</span>
-            </div>
-            @forelse ($deliveryOrder->items as $index => $item)
-                @php
-                    $soItem = $item->salesOrderItem;
-                    $deliveredBefore = $soItem ? round($salesService->deliveredQty($soItem) - (float) $item->qty, 2) : 0;
-                @endphp
-                <div class="mx-row">
-                    <span class="num">{{ $index + 1 }}</span>
-                    <span class="desc">{{ $item->product?->name ?: $soItem?->description }}</span>
-                    <span class="rt">{{ number_format((float) ($soItem?->qty ?? 0), 2) }}</span>
-                    <span class="rt">{{ number_format($deliveredBefore, 2) }}</span>
-                    <span class="rt" style="font-weight:700;">{{ number_format((float) $item->qty, 2) }}</span>
-                </div>
-            @empty
-                <div class="mx-row"><span>No items.</span></div>
-            @endforelse
-        </div>
-
-        <div class="mx-sum mx-row">
-            <span class="k">Total Qty</span>
-            <span>{{ number_format((float) $deliveryOrder->items->sum('qty'), 2) }}</span>
-        </div>
-
-        @if ($deliveryOrder->notes)
-            <div class="mx-row" style="margin-top:2px;"><span class="k">Notes</span></div>
-            <div>{{ $deliveryOrder->notes }}</div>
-        @endif
-
-        <div class="mx-sign">
-            <div class="col">
-                <div class="lbl">Prepared By</div>
-                <div class="line"></div>
-                <div class="mx-center">{{ $deliveryOrder->creator?->name }}</div>
-            </div>
-            <div class="col">
-                <div class="lbl">Received By</div>
-                <div class="line"></div>
-                <div class="mx-center">{{ $deliveryOrder->salesOrder?->customer?->name }}</div>
-            </div>
-        </div>
-
-        <div class="mx-center mx-footer">{{ now()->format('d M Y H:i') }}</div>
+        @include('pdf.partials.matrix-delivery-order', ['deliveryOrder' => $deliveryOrder, 'salesService' => $salesService])
     </div>
 </div>

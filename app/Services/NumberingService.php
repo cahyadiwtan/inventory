@@ -12,6 +12,7 @@ class NumberingService
         'sales_order' => 'SO',
         'delivery_order' => 'DO',
         'sales_invoice' => 'INV',
+        'direct_invoice' => 'DINV',
         'purchase_order' => 'PO',
         'goods_receipt' => 'GRN',
         'purchase_invoice' => 'PINV',

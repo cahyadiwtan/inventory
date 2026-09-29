@@ -44,6 +44,11 @@ class SalesInvoice extends BaseModel
         return $this->belongsTo(SalesOrder::class);
     }
 
+    public function deliveryOrder()
+    {
+        return $this->hasOne(DeliveryOrder::class, 'sales_invoice_id');
+    }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);

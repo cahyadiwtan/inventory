@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Dashboard;
+use App\Livewire\DataTransfer;
 use App\Livewire\Inventory\StockAdjustment;
 use App\Livewire\Inventory\StockOpnameComponent;
 use App\Livewire\Inventory\StockTransferComponent;
@@ -14,8 +15,11 @@ use App\Livewire\Purchasing\PurchaseInvoiceComponent;
 use App\Livewire\Purchasing\PurchaseOrderComponent;
 use App\Livewire\Reports;
 use App\Livewire\Settings\SettingsComponent;
+use App\Livewire\System\UserManagement;
 use App\Livewire\Sales\DeliveryOrderComponent;
 use App\Livewire\Sales\DeliveryOrderDetailComponent;
+use App\Livewire\Sales\DirectInvoiceComponent;
+use App\Livewire\Sales\DirectInvoiceDetailComponent;
 use App\Livewire\Sales\QuotationComponent;
 use App\Livewire\Sales\QuotationCreateComponent;
 use App\Livewire\Sales\QuotationDetailComponent;
@@ -59,6 +63,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('sales/deliveries/{deliveryOrder}', DeliveryOrderDetailComponent::class)->name('sales.deliveries.show');
     Route::get('sales/invoices', SalesInvoiceComponent::class)->name('sales.invoices.index');
     Route::get('sales/invoices/{invoice}', SalesInvoiceDetailComponent::class)->name('sales.invoices.show');
+    Route::get('sales/direct-invoices', DirectInvoiceComponent::class)->name('sales.direct-invoices.index');
+    Route::get('sales/direct-invoices/{invoice}', DirectInvoiceDetailComponent::class)->name('sales.direct-invoices.show');
 
     // Purchasing
     Route::get('purchasing/orders', PurchaseOrderComponent::class)->name('purchasing.orders.index');
@@ -68,9 +74,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Reports & Notifications
     Route::get('reports', Reports::class)->name('reports.index');
     Route::get('notifications', Notifications::class)->name('notifications.index');
+    Route::get('data-transfer', DataTransfer::class)->name('data-transfer.index');
 
     // Settings
     Route::get('settings', SettingsComponent::class)->name('settings.index');
+
+    // System
+    Route::get('system/users', UserManagement::class)->name('users.index');
 });
 
 require __DIR__.'/auth.php';

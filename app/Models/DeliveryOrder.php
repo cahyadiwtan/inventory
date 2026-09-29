@@ -7,6 +7,7 @@ class DeliveryOrder extends BaseModel
     protected $fillable = [
         'number',
         'sales_order_id',
+        'sales_invoice_id',
         'warehouse_id',
         'delivery_date',
         'status',
@@ -28,6 +29,11 @@ class DeliveryOrder extends BaseModel
     public function salesOrder()
     {
         return $this->belongsTo(SalesOrder::class);
+    }
+
+    public function salesInvoice()
+    {
+        return $this->belongsTo(SalesInvoice::class);
     }
 
     public function warehouse()

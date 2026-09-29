@@ -10,6 +10,7 @@ use App\Models\Tax;
 use App\Services\ActivityLogService;
 use App\Services\NumberingService;
 use App\Services\PurchaseService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Component;
 
 class PurchaseOrderComponent extends Component
@@ -23,6 +24,8 @@ class PurchaseOrderComponent extends Component
     public string $notes = '';
 
     public array $items = [];
+
+    public ?string $selectedOrderId = null;
 
     public function mount(): void
     {
@@ -110,6 +113,40 @@ class PurchaseOrderComponent extends Component
 
         $this->reset(['supplierId', 'notes']);
         $this->items = [];
+    }
+
+    public function print(string $id): void
+    {
+        $this->selectedOrderId = $id;
+        $this->dispatch('print');
+    }
+
+    public function exportPdf(string $id): \Symfony\Component\HttpFoundation\Response
+    {
+        $order = PurchaseOrder::with(['supplier', 'items.product', 'items.tax', 'creator'])->findOrFail($id);
+
+        $data = [
+            'purchaseOrder' => $order,
+            'company' => \App\Support\CompanyProfile::data(),
+            'logo' => \App\Support\CompanyProfile::logoDataUri(),
+        ];
+
+        $pdf = Pdf::loadView('pdf.purchase-order', $data)->setPaper('a4');
+
+        return response()->streamDownload(
+            fn () => print($pdf->output()),
+            'purchase-order-'.$order->number.'-'.now()->format('Ymd-His').'.pdf'
+        );
+    }
+
+    public function getSelectedOrderForPrintingProperty(): ?PurchaseOrder
+    {
+        if (! $this->selectedOrderId) {
+            return null;
+        }
+
+        return PurchaseOrder::with(['supplier', 'items.product', 'items.tax', 'creator'])
+            ->find($this->selectedOrderId);
     }
 
     public function approve(string $id): void

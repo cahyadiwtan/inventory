@@ -49,6 +49,11 @@
     display: none;
 }
 
+.print-break {
+    page-break-after: always;
+    break-after: page;
+}
+
 /* Wrapping of full-screen layout inside a div.print-screen */
 @media print {
     .print-screen {
@@ -85,33 +90,33 @@
     width: 100%;
 }
 
-.print-area.print-laser .pl-company {
+.print-area .pl-company {
     border-bottom: 2px solid #0b1c30;
     padding-bottom: 10px;
     margin-bottom: 16px;
 }
 
-.print-area.print-laser .pl-company-name {
+.print-area .pl-company-name {
     font-size: 18px;
     font-weight: 700;
     color: #0b1c30;
 }
 
-.print-area.print-laser .pl-company-addr,
-.print-area.print-laser .pl-company-contact {
+.print-area .pl-company-addr,
+.print-area .pl-company-contact {
     font-size: 10px;
     color: #45474c;
     margin-top: 2px;
 }
 
-.print-area.print-laser .pl-header {
+.print-area .pl-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 16px;
 }
 
-.print-area.print-laser .pl-title {
+.print-area .pl-title {
     font-size: 20px;
     font-weight: 700;
     color: #0051d5;
@@ -119,26 +124,26 @@
     letter-spacing: 0.12em;
 }
 
-.print-area.print-laser .pl-meta {
+.print-area .pl-meta {
     font-size: 11px;
     text-align: right;
 }
 
-.print-area.print-laser .pl-meta div {
+.print-area .pl-meta div {
     margin-bottom: 2px;
 }
 
-.print-area.print-laser .pl-meta span {
+.print-area .pl-meta span {
     font-weight: 600;
 }
 
-.print-area.print-laser table {
+.print-area table {
     width: 100%;
     border-collapse: collapse;
     font-size: 11px;
 }
 
-.print-area.print-laser table th {
+.print-area table th {
     border-bottom: 2px solid #0b1c30;
     padding: 6px 8px;
     text-align: left;
@@ -147,30 +152,30 @@
     letter-spacing: 0.04em;
 }
 
-.print-area.print-laser table td {
+.print-area table td {
     border-bottom: 1px solid #c5c6cd;
     padding: 6px 8px;
 }
 
-.print-area.print-laser table th.r,
-.print-area.print-laser table td.r {
+.print-area table th.r,
+.print-area table td.r {
     text-align: right;
 }
 
-.print-area.print-laser .pl-summary {
+.print-area .pl-summary {
     margin-left: auto;
     width: 260px;
     font-size: 11px;
     margin-top: 12px;
 }
 
-.print-area.print-laser .pl-summary .row {
+.print-area .pl-summary .row {
     display: flex;
     justify-content: space-between;
     padding: 3px 0;
 }
 
-.print-area.print-laser .pl-summary .row.total {
+.print-area .pl-summary .row.total {
     border-top: 2px solid #0b1c30;
     margin-top: 4px;
     padding-top: 6px;
@@ -178,41 +183,41 @@
     font-size: 13px;
 }
 
-.print-area.print-laser .pl-sign {
+.print-area .pl-sign {
     display: flex;
     gap: 48px;
     margin-top: 48px;
 }
 
-.print-area.print-laser .pl-sign .col {
+.print-area .pl-sign .col {
     flex: 1;
 }
 
-.print-area.print-laser .pl-sign .lbl {
+.print-area .pl-sign .lbl {
     font-size: 10px;
     text-transform: uppercase;
     color: #45474c;
     margin-bottom: 28px;
 }
 
-.print-area.print-laser .pl-sign .line {
+.print-area .pl-sign .line {
     border-bottom: 1px solid #94a3b8;
     height: 32px;
 }
 
-.print-area.print-laser .pl-sign .sub {
+.print-area .pl-sign .sub {
     font-size: 10px;
     color: #45474c;
     margin-top: 4px;
 }
 
-.print-area.print-laser .pl-notes {
+.print-area .pl-notes {
     margin-top: 16px;
     font-size: 11px;
     color: #45474c;
 }
 
-.print-area.print-laser .pl-notes b {
+.print-area .pl-notes b {
     text-transform: uppercase;
     font-size: 9px;
 }
@@ -229,6 +234,31 @@
 
 .print-area.print-matrix .mx-center {
     text-align: center;
+}
+
+.print-area.print-matrix .mx-company {
+    border-bottom: 2px solid #000;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+    font-size: 10px;
+}
+
+.print-area.print-matrix .mx-company .mx-brand {
+    font-size: 13px;
+}
+
+.print-area.print-matrix .hd-row {
+    align-items: flex-start;
+    margin-bottom: 6px;
+}
+
+.print-area.print-matrix .mx-meta {
+    text-align: right;
+    font-size: 9px;
+}
+
+.print-area.print-matrix .mx-meta .k {
+    font-size: 9px;
 }
 
 .print-area.print-matrix .mx-brand {

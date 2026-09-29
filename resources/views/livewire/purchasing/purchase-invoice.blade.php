@@ -119,40 +119,43 @@
     </div>
 
     @if ($payingInvoiceId)
-        <div class="card p-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-lg font-semibold text-navy-900">Catat Pembayaran</h2>
-                <button wire:click="closePayment" class="rounded-lg p-2 text-gray-400 hover:bg-surface-muted hover:text-navy-900">X</button>
-            </div>
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/50 p-4" wire:click.self="closePayment">
+            <div class="card w-full max-w-2xl p-6 shadow-dropdown">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-navy-900">Catat Pembayaran</h2>
+                    <button wire:click="closePayment" class="rounded-lg p-2 text-gray-400 hover:bg-surface-muted hover:text-navy-900">X</button>
+                </div>
 
-            <form wire:submit="submitPayment" class="mt-4 grid grid-cols-4 items-end gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700">Tanggal</label>
-                    <input type="date" wire:model="paymentDate" class="input-field mt-1">
-                    @error('paymentDate')<p class="mt-1 text-xs text-danger">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700">Metode</label>
-                    <select wire:model="paymentMethod" class="input-field mt-1">
-                        @foreach (['cash', 'bank_transfer', 'check', 'credit', 'other'] as $method)
-                            <option value="{{ $method }}">{{ ucfirst(str_replace('_', ' ', $method)) }}</option>
-                        @endforeach
-                    </select>
-                    @error('paymentMethod')<p class="mt-1 text-xs text-danger">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700">Jumlah <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" min="0" wire:model="paymentAmount" class="input-field mt-1">
-                    @error('paymentAmount')<p class="mt-1 text-xs text-danger">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700">Referensi</label>
-                    <input type="text" wire:model="paymentReference" placeholder="Opsional" class="input-field mt-1">
-                </div>
-                <div class="col-span-4 flex justify-end">
-                    <button type="submit" class="btn-primary">Simpan Pembayaran</button>
-                </div>
-            </form>
+                <form wire:submit="submitPayment" class="mt-4 grid grid-cols-4 items-end gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Tanggal</label>
+                        <input type="date" wire:model="paymentDate" class="input-field mt-1">
+                        @error('paymentDate')<p class="mt-1 text-xs text-danger">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Metode</label>
+                        <select wire:model="paymentMethod" class="input-field mt-1">
+                            @foreach (['cash', 'bank_transfer', 'check', 'credit', 'other'] as $method)
+                                <option value="{{ $method }}">{{ ucfirst(str_replace('_', ' ', $method)) }}</option>
+                            @endforeach
+                        </select>
+                        @error('paymentMethod')<p class="mt-1 text-xs text-danger">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Jumlah <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" min="0" wire:model="paymentAmount" class="input-field mt-1">
+                        @error('paymentAmount')<p class="mt-1 text-xs text-danger">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700">Referensi</label>
+                        <input type="text" wire:model="paymentReference" placeholder="Opsional" class="input-field mt-1">
+                    </div>
+                    <div class="col-span-4 flex justify-end gap-3">
+                        <button type="button" wire:click="closePayment" class="btn-secondary">Batal</button>
+                        <button type="submit" class="btn-primary">Simpan Pembayaran</button>
+                    </div>
+                </form>
+            </div>
         </div>
     @endif
 </div>
